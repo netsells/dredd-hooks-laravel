@@ -1,0 +1,31 @@
+{
+    "name": "netsells/dredd-hooks-laravel",
+    "description": "Laravel hooks for the Dredd testing tool",
+    "type": "package",
+    "require": {
+        "php": ">=7.1",
+        "nikic/php-parser": "^3.1",
+        "ddelnano/dredd-hooks-php": "^1.1"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Sam Jordan",
+            "email": "sam@netsells.co.uk"
+        }
+    ],
+    "bin": ["bin/dredd-hooks-laravel"],
+    "autoload": {
+        "psr-4": {
+            "Netsells\\Dredd\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Netsells\\Dredd\\DreddServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "stable"
+}

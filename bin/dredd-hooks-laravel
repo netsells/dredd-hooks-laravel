@@ -1,0 +1,84 @@
+#!/usr/bin/env php
+<?php
+
+/*
+ * This is mostly taken from ddelnano/dredd-hooks-php
+ */
+
+use Dredd\Server;
+use Dredd\Hooks;
+
+ini_set('implicit_flush', 'on');
+ini_set('output_buffering', 'off');
+
+
+$loaded = false;
+foreach ([__DIR__ . '/../../../autoload.php', __DIR__ . '/../vendor/autoload.php'] as $file) {
+    if (file_exists($file)) {
+        require $file;
+        $loaded = true;
+        break;
+    }
+}
+if (!$loaded) {
+    die(
+        'You need to set up the project dependencies using the following commands:' . PHP_EOL .
+        'wget http://getcomposer.org/composer.phar' . PHP_EOL .
+        'php composer.phar install' . PHP_EOL
+    );
+}
+
+// Load Laravel
+$app = require $devPath . '/bootstrap/app.php';
+$app->make(\Illuminate\Contracts\Console\Kernel::class)->bootstrap();
+
+// Get options from the command line
+$options = getopt('', [
+    'host:',
+    'port:',
+    'force',
+]);
+
+// Second argument is the single kernel file
+$dreddKernel = $argv[1];
+$dreddKernelFile = file_get_contents($dreddKernel);
+
+$parser = (new PhpParser\ParserFactory)->create(PhpParser\ParserFactory::PREFER_PHP7);
+
+try {
+    $stmts = $parser->parse($dreddKernelFile);
+    // $stmts is an array of statement nodes
+} catch (PhpParser\Error $e) {
+    echo 'Parse Error: ', $e->getMessage();
+}
+
+$namespace = '';
+$class = '';
+
+if ($stmts[0] instanceof  PhpParser\Node\Stmt\Namespace_) {
+    $namespace = implode('\\', $stmts[0]->name->parts);
+    foreach ($stmts[0]->stmts as $statement) {
+        if ($statement instanceof PhpParser\Node\Stmt\Class_) {
+            $class = $statement->name;
+        }
+    }
+}
+
+$kernelClass = $namespace . '\\' . $class;
+$kernel = new $kernelClass;
+
+$kernel->handle(new \Netsells\Dredd\Hook());
+
+$host = array_key_exists('host', $options)
+    ? $options['host']
+    : '127.0.0.1';
+$port = array_key_exists('port', $options)
+    ? $options['port']
+    : 61321;
+
+$server = new Server($host, $port);
+
+fprintf(STDOUT, "Starting server\n");
+flush();
+
+$server->run(array_key_exists('force', $options));
