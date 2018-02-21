@@ -7,13 +7,15 @@
 
 use Dredd\Server;
 use Dredd\Hooks;
+use PhpParser\ParserFactory;
 
 ini_set('implicit_flush', 'on');
 ini_set('output_buffering', 'off');
 
+$basePath = __DIR__ . '/../../../..';
 
 $loaded = false;
-foreach ([__DIR__ . '/../../../autoload.php', __DIR__ . '/../vendor/autoload.php'] as $file) {
+foreach ([$basePath . '/vendor/autoload.php'] as $file) {
     if (file_exists($file)) {
         require $file;
         $loaded = true;
@@ -29,7 +31,7 @@ if (!$loaded) {
 }
 
 // Load Laravel
-$app = require $devPath . '/bootstrap/app.php';
+$app = require $basePath . '/bootstrap/app.php';
 $app->make(\Illuminate\Contracts\Console\Kernel::class)->bootstrap();
 
 // Get options from the command line
@@ -40,32 +42,31 @@ $options = getopt('', [
 ]);
 
 // Second argument is the single kernel file
-$dreddKernel = $argv[1];
-$dreddKernelFile = file_get_contents($dreddKernel);
-
-$parser = (new PhpParser\ParserFactory)->create(PhpParser\ParserFactory::PREFER_PHP7);
+$dreddKernelPath = $argv[1];
+$parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
 
 try {
-    $stmts = $parser->parse($dreddKernelFile);
-    // $stmts is an array of statement nodes
+    $statements = $parser->parse(file_get_contents($dreddKernelPath));
 } catch (PhpParser\Error $e) {
-    echo 'Parse Error: ', $e->getMessage();
+    echo "Failed parsing {$dreddKernelPath} - " . $e->getMessage();
+    die();
 }
 
-$namespace = '';
-$class = '';
-
-if ($stmts[0] instanceof  PhpParser\Node\Stmt\Namespace_) {
-    $namespace = implode('\\', $stmts[0]->name->parts);
-    foreach ($stmts[0]->stmts as $statement) {
-        if ($statement instanceof PhpParser\Node\Stmt\Class_) {
-            $class = $statement->name;
+try {
+    if ($statements[0] instanceof  PhpParser\Node\Stmt\Namespace_) {
+        $kernelClass = implode('\\', $statements[0]->name->parts);
+        foreach ($statements[0]->stmts as $statement) {
+            if ($statement instanceof PhpParser\Node\Stmt\Class_) {
+                $kernelClass .= '\\' . $statement->name;
+            }
         }
     }
-}
 
-$kernelClass = $namespace . '\\' . $class;
-$kernel = new $kernelClass;
+    $kernel = new $kernelClass;
+} catch (\Exception $e) {
+    echo "Failed parsing {$dreddKernelPath}. Ensure the file has both a namespace and class name. [{$e->getMessage()}]";
+    die();
+}
 
 $kernel->handle(new \Netsells\Dredd\Hook());
 
