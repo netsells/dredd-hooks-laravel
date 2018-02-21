@@ -30,6 +30,12 @@ if (!$loaded) {
     );
 }
 
+// Laravel will not overwrite existing environment variables, so we'll pull in custom ones here
+if (file_exists($basePath . '/.env.dredd')) {
+    $dotenv = new Dotenv\Dotenv($basePath, '.env.dredd');
+    $dotenv->overload();
+}
+
 // Load Laravel
 $app = require $basePath . '/bootstrap/app.php';
 $app->make(\Illuminate\Contracts\Console\Kernel::class)->bootstrap();
