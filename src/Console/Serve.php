@@ -34,7 +34,7 @@ class Serve extends Command
     {
         chdir($this->laravel->publicPath());
 
-        $this->line("<info>Laravel development server started:</info> <http://{$this->host()}:{$this->port()}>");
+        $this->line("<info>Laravel dredd testing server started:</info> <http://{$this->host()}:{$this->port()}>");
 
         passthru($this->serverCommand());
     }
