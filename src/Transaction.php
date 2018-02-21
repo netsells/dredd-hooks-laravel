@@ -15,7 +15,6 @@ class Transaction
     {
         $this->transaction->request->uri = str_replace($old, $new, $this->transaction->request->uri);
         $this->transaction->fullPath = str_replace($old, $new, $this->transaction->fullPath);
-        echo "Replacing $old with $new";
     }
 
     /**
