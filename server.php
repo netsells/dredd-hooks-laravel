@@ -6,7 +6,9 @@ $basePath = __DIR__ . '/../../..';
 require $basePath . '/vendor/autoload.php';
 
 // Laravel will not overwrite existing environment variables, so we'll pull in custom ones here
-$dotenv = new Dotenv\Dotenv($basePath, '.env.dredd');
-$dotenv->load();
+if (file_exists($basePath . '/.env.dredd')) {
+    $dotenv = new Dotenv\Dotenv($basePath, '.env.dredd');
+    $dotenv->overload();
+}
 
 require_once $basePath . '/server.php';
