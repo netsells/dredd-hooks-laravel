@@ -1,4 +1,8 @@
 # Laravel Hooks for Dredd API Testing Framework
+[![Packagist](https://img.shields.io/packagist/v/netsells/dredd-hooks-laravel.svg)](https://packagist.org/packages/netsells/dredd-hooks-laravel)
+[![Packagist](https://img.shields.io/packagist/dt/netsells/dredd-hooks-laravel.svg)](https://packagist.org/packages/netsells/dredd-hooks-laravel)
+[![license](https://img.shields.io/github/license/netsells/dredd-hooks-laravel.svg)]()
+
 This package contains a PHP Dredd hook handler which provides a bridge between the [Dredd API Testing Framework](http://dredd.readthedocs.org/en/latest/)
  and PHP environment to ease implementation of testing hooks provided by [Dredd](http://dredd.readthedocs.org/en/latest/). Most of the heavy lifting is provided by the [ddelnano/dredd-hooks-php](https://github.com/ddelnano/dredd-hooks-php) package.
 
