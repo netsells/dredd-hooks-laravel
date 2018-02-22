@@ -8,24 +8,49 @@ class Hook
 {
     use ResolvesArgumentTrait;
 
-    protected $group;
-    protected $operation;
-    protected $path;
-    protected $status = 200;
-    protected $response = 'application/json';
+    public $group;
+    public $operation;
+    public $path;
+    public $status = 200;
+    public $response = 'application/json';
+
+    public function __construct($group = null, $path = null, $operation = null, $status = null, $response = null)
+    {
+        if ($group) {
+            $this->group = $group;
+        }
+
+        if ($operation) {
+            $this->operation = $operation;
+        }
+
+        if ($path) {
+            $this->path = $path;
+        }
+
+        if ($status) {
+            $this->status = $status;
+        }
+
+        if ($response) {
+            $this->response = $response;
+        }
+    }
 
     public function __call($method, $args)
     {
         if (in_array($method, ['group', 'path', 'operation', 'status', 'response'])) {
-            $this->{$method} = $args[0];
+            $hook = $this->reCreateSelf();
+
+            $hook->{$method} = $args[0];
 
             if (isset($args[1])) {
-                if ($callable = $this->resolveArgument($args[1])) {
-                    return $callable($this);
+                if ($callable = $hook->resolveArgument($args[1])) {
+                    return $callable($hook);
                 }
             }
 
-            return $this;
+            return $hook;
         }
 
         if (in_array($method, ['before'])) {
@@ -37,6 +62,11 @@ class Hook
                 $transaction = $transactionObject->getTransaction();
             });
         }
+    }
+
+    private function reCreateSelf()
+    {
+        return new static($this->group, $this->path, $this->operation, $this->status, $this->response);
     }
 
     private function buildTransactionName()

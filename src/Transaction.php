@@ -26,7 +26,7 @@ class Transaction
     public function alterBody(\Closure $closure)
     {
         $requestBody = json_decode($this->transaction->request->body);
-        $requestBody = $closure($requestBody);
+        $closure($requestBody);
         $this->transaction->request->body = json_encode($requestBody);
     }
 

@@ -4,7 +4,7 @@ namespace Netsells\Dredd;
 
 trait ResolvesArgumentTrait
 {
-    protected function resolveArgument($argument)
+    public function resolveArgument($argument)
     {
         if (is_array($argument)) {
             $method = $argument[1];
