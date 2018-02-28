@@ -63,6 +63,17 @@ class Hook
             });
         }
     }
+    
+    /**
+     *  Skip the test
+     */
+    public function skipTest()
+    {
+        Hooks::before($this->buildTransactionName(), function (&$transaction) {
+            echo "Skipping Test: " . $this->buildTransactionName();
+            $transaction->skip = true;
+        });
+    }
 
     private function reCreateSelf()
     {
