@@ -57,6 +57,9 @@ class Hook
             $callable = $this->resolveArgument($args[0]);
 
             Hooks::$method($this->buildTransactionName(), function (&$transaction) use ($callable) {
+                
+                echo "Running Hook: " . $this->buildTransactionName();
+                
                 $transactionObject = new Transaction($transaction);
                 $callable($transactionObject);
                 $transaction = $transactionObject->getTransaction();
