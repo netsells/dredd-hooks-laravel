@@ -12,7 +12,7 @@ This package contains a PHP Dredd hook handler which provides a bridge between t
 Laravel Hooks for Dredd should be installed via composer, we recommend you put this in your require-dev section.
 
 ```bash
-composer require ddelnano/dredd-hooks-laravel --dev
+composer require netsells/dredd-hooks-laravel --dev
 ```
 
 ### Dredd Setup
