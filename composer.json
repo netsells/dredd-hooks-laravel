@@ -4,7 +4,7 @@
     "type": "package",
     "require": {
         "php": ">=7.1",
-        "nikic/php-parser": "^3.1",
+        "nikic/php-parser": "^4.2",
         "ddelnano/dredd-hooks-php": "^1.1"
     },
     "license": "MIT",
