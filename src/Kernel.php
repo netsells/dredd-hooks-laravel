@@ -4,6 +4,20 @@ namespace Netsells\Dredd;
 
 use Dredd\Hooks;
 
+/**
+ * Class Kernel
+ *
+ * @package Netsells\Dredd
+ *
+ * @method Hooks\beforeAll beforeAll(callable $function)
+ * @method Hooks\beforeEach beforeEach(callable $function)
+ * @method Hooks\beforeEachValidation beforeEachValidation(callable $function)
+ * @method Hooks\afterEach afterEach(callable $function)
+ * @method Hooks\afterAll afterAll(callable $function)
+ * @method Hooks\before before(string $transactionName, callable $function)
+ * @method Hooks\beforeValidation beforeValidation(callable $function)
+ * @method Hooks\after after(string $transactionName, callable $function)
+ */
 abstract class Kernel
 {
     use ResolvesArgumentTrait;
